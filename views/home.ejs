@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>OAuth Tutorials</title>
+        <style>
+            body{
+                font-family: arial;
+                margin: 0;
+            }
+            .gallery{
+                background: rgba(39,62,84,0.82);
+                position: relative;
+            }
+            nav{
+                background: black;
+                padding: 20px 10px;
+            }
+            nav ul{
+                max-width: 100%;
+                margin: 0 ;
+                padding: 0;
+            }
+            nav li{
+                list-style-type: none;
+                display: inline-block;
+                margin: 0 10px 0 0;
+            }
+            nav a{
+                color: #fff;
+                font-size: 18px;
+                background: rgba(255,255,255,0.2);
+                text-decoration: none;
+                padding: 10px;
+                display: block;
+            }
+            main, header{
+                max-width: 100%;
+                margin: 30px ;
+                padding: 0 10px;
+                color: #333;
+            }
+            div.gallery:hover {
+            border: 1px solid #777;
+            }
+
+            div.gallery img {
+            width: 100%;
+            height: auto;
+            }
+
+            div.desc {
+            padding: 15px;
+            text-align: center;
+            }             
+            .bottom-left {
+            position: absolute;
+            bottom: 8px;
+            left: 16px;
+            }                    
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <% if (user) { %>
+                <li><a href="/auth/logout">Log out</a></li>
+                <% } else { %>
+                <li><a href="/auth/login">Login</a></li>
+                <% } %>
+                <li><a href="/">Homepage</a></li>
+                <% if (user) { %>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/chat">Chat</a></li>
+                <% } %>
+            </ul>
+        </nav>
+        <div class="container" >
+          <div class="gallery">
+            <a target="_blank" href="img_5terre.jpg">
+              <img src="shikamaru.jpg" alt="Cinque Terre">
+              <div class="bottom-left">Bottom Left</div>
+            </a>
+          </div>
+          
+          <div class="gallery">
+            <a target="_blank" href="img_5terre.jpg">
+              <img src="`shikamaru.jpg" alt="Cinque Terre">
+            </a>
+          </div>
+          
+          <div class="gallery">
+            <a target="_blank" href="img_5terre.jpg">
+              <img src="715451.png" alt="Cinque Terre">
+            </a>
+          </div>
+          
+          <div class="gallery">
+            <a target="_blank" href="img_5terre.jpg">
+              <img src="1077385-shikamaru-nara-wallpaper-1920x1200-for-4k.jpg" alt="Cinque Terre">
+            </a>
+          </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=" http://localhost:3000/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <title>Homepage</title>
+        <style>
+            body{
+                font-family: arial;
+                margin: 0;
+            }
+            nav{
+                background:black;
+                padding: 20px 10px;
+            }
+            nav ul{
+                max-width: 100%;
+                margin: 0 ;
+                padding: 0;
+            }
+            nav li{
+                list-style-type: none;
+                display: inline-block;
+                margin: 0 10px 0 0;
+            }
+            nav a{
+                color: #fff;
+                font-size: 18px;
+                background: rgba(255,255,255,0.2);
+                text-decoration: none;
+                padding: 10px;
+                display: block;
+            }
+            main, header{
+                max-width: 100%;
+                margin: 30px ;
+                padding: 0 10px;
+                color: #333;
+            }
+            main img{
+                width: 40px;
+                margin-right: 10px;
+                position: relative;
+                top: 12px;
+            }
+            main p{
+                display: inline-block;
+            }
+            nav li img{
+                float: right;
+                width: 30px;
+                height: 30px;
+            }
+            .dp{
+                width: 200px;
+                padding: 15px
+            }
+            #status_update{
+                padding: 10px;
+            }
+            .username{
+                padding: 15px;
+            }
+            .write_something{
+                padding: 10px;
+            }
+            .status_list{
+                padding-top: 30px;  
+            }
+            .status_list li{
+                 list-style-type: none;
+                 margin: 0;
+                 padding: 10px; 
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <% if (user) { %>
+                <li><a href="/auth/logout">Log out</a></li>
+                <% } else { %>
+                <li><a href="/auth/login">Login</a></li>
+                <% } %>
+                <li><a href="/">Homepage</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/chat">Chat</a></li>
+                <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
+            </ul>
+        </nav>
+        <div class="row">
+            <div  class="col-sm-3">
+                <img src="<%= user.thumbnail %>" alt="avatar" class="dp">
+                <h1 class="username"><%= user.username %></h1>
+            </div>
+            <div  class="col-sm-8">
+                    <h2 style="display:none;" id="uid"><%= user.id%></h2>
+                <div class='write_something'>
+                    <textarea name="status" id="status" cols="90" rows="2"></textarea>
+                </div>
+                <div>
+                    <button class="btn-primary" id='update'>Update</button>
+                </div>
+                <div class="status_list"> 
+                    <h1>Status Updates</h1>
+                    <ul id="status_update">
+                        <% for(var i=0; i < data.length; i++) { %>
+                        <li><%= data[i].status %></li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>   
+           
+        var socket = io.connect('http://localhost:3000');
+
+        $(document.body).on('click',"#update",function(){
+            var data={}
+            data.id = $("#uid").html(); 
+            data.status = $('#status').val(); 
+            console.log("status_update")
+          socket.emit('status_update',data);          
+        })
+
+        socket.on('update_status', function(status) {    
+                console.log($("#uid").html())            
+                $('#status_update').append($('<li>').html(status));
+        });
+        
+        
+        
+</script>
