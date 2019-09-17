@@ -101,6 +101,10 @@
                     <textarea name="status" id="status" cols="90" rows="2"></textarea>
                 </div>
                 <div>
+                    <input type="file" id="img">
+                </div>
+                <img class="photo">
+                <div>
                     <button class="btn-primary" id='update'>Update</button>
                 </div>
                 <div class="status_list"> 
@@ -120,9 +124,11 @@
         var socket = io.connect('http://localhost:3000');
 
         $(document.body).on('click',"#update",function(){
+            var blobFile = $('#img').get(0).files[0]
             var data={}
             data.id = $("#uid").html(); 
             data.status = $('#status').val(); 
+            data.file = blobFile;
             console.log("status_update")
           socket.emit('status_update',data);          
         })
@@ -131,7 +137,14 @@
                 console.log($("#uid").html())            
                 $('#status_update').append($('<li>').html(status));
         });
-        
-        
-        
+        socket.on('img_dp', function(imgs) {  
+            console.log(imgs)  
+            var arrayBufferView = new Uint8Array( imgs );
+        	var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+            var urlCreator = window.URL || window.webkitURL;
+            var imageUrl = urlCreator.createObjectURL( blob );
+            var img = document.createElement('img');
+            img.src = imageUrl;
+            document.body.appendChild(img);
+        });                        
 </script>

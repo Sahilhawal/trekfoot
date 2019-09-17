@@ -12,6 +12,10 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 //const profile = require('./views/profile.ejs')
 const status = require('./models/status-model');
+const img = require('./models/img-model');
+var fs = require('fs');
+
+var imgPath = './img/715451.png'
 
 
 
@@ -75,12 +79,27 @@ io.sockets.on('connection', function(socket) {
     });
 // status
     socket.on('status_update', function(data) {
-        console.log("status",data)
+        //console.log("status",data)
         new status({
             id: data.id,
             status: data.status
         }).save()
+        var imgs = new img
+        //console.log(data.file)
+        /*
+        imgs.img.data = fs.readFile(imgPath , function read(err, data) {
+            if (err) {
+                throw err;
+            }
+        });  
+        */      
+        imgs.img.data = data.file
+        imgs.img.contentType = 'image/png';
+        imgs.save()     
         io.emit('update_status', '<p>' + data.status + '</p>');
+        io.emit('img_dp',imgs.img.data.buffer );
+        console.log(imgs)
+        console.log('img',imgs.img.data.buffer)
     });
 
 });
