@@ -31,6 +31,8 @@ app.use(cookieSession({
     keys: [keys.session.cookieKey]
 }));
 
+
+
 // initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -52,7 +54,7 @@ app.get('/', (req, res) => {
 
 // status
 app.on('status_update',function(status){
-    console.log('new status',status)
+    //console.log('new status',status)
 })
 
 // for chatting
@@ -63,7 +65,7 @@ app.get('/chat', (req, res) => {
 // sockets
 io.sockets.on('connection', function(socket) {
     socket.on('username', function(data) {
-        console.log(data)
+        //console.log(data)
         socket.username = data.username;
         socket.avatar = data.avatar;
         io.emit('is_online', '<img src="'+socket.avatar+'" /><i>' + socket.username + ' join the chat..</i>');
@@ -74,8 +76,14 @@ io.sockets.on('connection', function(socket) {
     })
 
     socket.on('chat_message', function(message) {
-        console.log("hello",message)
+        //console.log("hello",message)
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+    });
+// for status and images    
+    socket.on('status_imgs', function() {             
+        img.find({},{img,status},function(err,docs){
+            io.emit('status_imgs',docs );
+        })
     });
 // status
     socket.on('status_update', function(data) {
@@ -95,11 +103,13 @@ io.sockets.on('connection', function(socket) {
         */      
         imgs.img.data = data.file
         imgs.img.contentType = 'image/png';
+        imgs.status = data.status;
+        console.log("status",data.status)
         imgs.save()     
         io.emit('update_status', '<p>' + data.status + '</p>');
         io.emit('img_dp',imgs.img.data.buffer );
-        console.log(imgs)
-        console.log('img',imgs.img.data.buffer)
+        //console.log(imgs)
+        //console.log('img',imgs.img.data.buffer)
     });
 
 });
