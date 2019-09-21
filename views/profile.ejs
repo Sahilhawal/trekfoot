@@ -84,6 +84,9 @@
             .final{
                 padding: 20px;
             }
+            .status_pics{
+                width: 25px !important;
+            }
         </style>
     </head>
     <body>
@@ -107,6 +110,7 @@
             </div>
             <div  class="col-sm-8">
                     <h2 style="display:none;" id="uid"><%= user.id%></h2>
+                    <h2 style="display:none;" id="displaypic"><%= user.thumbnail %></h2>
                 <div class='write_something'>
                     <textarea name="status" id="status" cols="90" rows="2"></textarea>
                 </div>
@@ -130,7 +134,8 @@
         </div>
     </body>
 </html>
-<script>   
+<script>  
+        var displaypic=$("#displaypic").html()
            
         var socket = io.connect('http://localhost:3000');
         $(document).ready(function() {
@@ -147,7 +152,7 @@
                     var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
                     var urlCreator = window.URL || window.webkitURL;
                     var imageUrl = urlCreator.createObjectURL( blob );
-                    html += "<div class='row final'><p>"+data[x].status+"</p><img src='"+imageUrl+"'></div>"
+                    html += "<div class='row final'><img src='"+displaypic+"' class='status_pics'><strong>"+data[x].name+"</strong></div><div class='row final'><p>"+data[x].status+"</p><img src='"+imageUrl+"'</div>"
                     $("#append").html(html);                      
                 }                           
         });
@@ -156,10 +161,11 @@
             var blobFile = $('#img').get(0).files[0]
             var data={}
             data.id = $("#uid").html(); 
+            data.name = $(".username").html();
             data.status = $('#status').val(); 
             data.file = blobFile;
             console.log("status_update", data)
-          socket.emit('status_update',data);          
+            socket.emit('status_update',data);          
         })
 
         socket.on('update_status', function(status) {    

@@ -12,7 +12,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 //const profile = require('./views/profile.ejs')
 const status = require('./models/status-model');
-const img = require('./models/img-model');
+const User = require('./models/user-model');
 var fs = require('fs');
 
 var imgPath = './img/715451.png'
@@ -48,7 +48,36 @@ app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
 
 // create home route
+
 app.get('/', (req, res) => {
+    status.find({},function(err,docs){
+        var statusarray = []         
+        var user_status = {}
+        for (var x=0;x<docs.length;x++){
+            //var user_status={}
+                user_status.dp = User.findOne({_id: docs[x].id}).exec(function (error, user){
+                    console.log(user.thumbnail)
+                     return user.thumbnail;                     
+                });
+                sleep(1000);
+                console.log("end")
+                function sleep(milliseconds) {
+                    var start = new Date().getTime();
+                    for (var i = 0; i < 1e7; i++) {
+                      if ((new Date().getTime() - start) > milliseconds){
+                        break;
+                      }
+                    }
+                  }
+                console.log('111',user_status.dp)
+                user_status.username = docs[x].user;
+                user_status.status_img = docs[x].statusimg
+                user_status.status =  docs[x].status                                   
+                statusarray.push(user_status);            
+        }  
+        console.log("array-1",statusarray)   
+        io.emit('dashboard_status',docs );
+    })
     res.render('home', { user: req.user });
 });
 
@@ -80,19 +109,21 @@ io.sockets.on('connection', function(socket) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
     });
 // for status and images    
-    socket.on('status_imgs', function() {             
-        img.find({},{img,status},function(err,docs){
+    socket.on('status_imgs', function() {            
+        status.find({},function(err,docs){
             io.emit('status_imgs',docs );
         })
     });
 // status
     socket.on('status_update', function(data) {
-        //console.log("status",data)
+        console.log("statusssssssss",data)
+        /*
         new status({
             id: data.id,
             status: data.status
         }).save()
-        var imgs = new img
+        */
+        var imgs = new status
         //console.log(data.file)
         /*
         imgs.img.data = fs.readFile(imgPath , function read(err, data) {
@@ -100,10 +131,12 @@ io.sockets.on('connection', function(socket) {
                 throw err;
             }
         });  
-        */      
-        imgs.img.data = data.file
+        */  
+        imgs.id = data.id;  
+        imgs.img.data = data.file;
         imgs.img.contentType = 'image/png';
         imgs.status = data.status;
+        imgs.name = data.name; 
         console.log("status",data.status)
         imgs.save()     
         io.emit('update_status', '<p>' + data.status + '</p>');
