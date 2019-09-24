@@ -54,29 +54,45 @@ app.get('/', (req, res) => {
         var statusarray = []         
         var user_status = {}
         for (var x=0;x<docs.length;x++){
-            //var user_status={}
-                user_status.dp = User.findOne({_id: docs[x].id}).exec(function (error, user){
+/*            
+                    user_status.dp = User.findOne({_id: docs[x].id}).exec(function (error, user){
                     console.log(user.thumbnail)
-                     return user.thumbnail;                     
+                    user_status.dp = user.thumbnail; 
                 });
-                sleep(1000);
-                console.log("end")
-                function sleep(milliseconds) {
-                    var start = new Date().getTime();
-                    for (var i = 0; i < 1e7; i++) {
-                      if ((new Date().getTime() - start) > milliseconds){
-                        break;
-                      }
-                    }
-                  }
-                console.log('111',user_status.dp)
-                user_status.username = docs[x].user;
-                user_status.status_img = docs[x].statusimg
-                user_status.status =  docs[x].status                                   
-                statusarray.push(user_status);            
-        }  
-        console.log("array-1",statusarray)   
-        io.emit('dashboard_status',docs );
+                
+                    user_status.username = docs[x].user;
+                    user_status.status_img = docs[x].statusimg
+                    user_status.status =  docs[x].status                                   
+                    statusarray.push(user_status);    
+*/                             
+// promises 
+        
+        user_status.status_img = docs[x].img
+        user_status.status =  docs[x].status                    
+        var promise = new Promise(function(resolve, reject) {
+            User.findOne({_id: docs[x].id}).exec(function (error, user){
+          
+            if (user) {
+                //console.log(user)
+                user_status.username = user.username;
+                user_status.dp = user.thumbnail;                
+                resolve(user_status);
+            }
+            else {
+              reject(error("It broke"));
+            }
+          }); 
+        });  
+        promise.then(function(result) {                               
+            statusarray.push(user_status); 
+            io.emit('dashboard_status',statusarray );                
+            //console.log('result',statusarray); // "Stuff worked!"
+          }, function(err) {
+            console.log(err); // Error: "It broke"
+          });    
+        }     
+        console.log(statusarray)    
+        //io.emit('dashboard_status',docs );
     })
     res.render('home', { user: req.user });
 });

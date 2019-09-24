@@ -115,9 +115,9 @@
                 console.log('data',data) 
                 var html=""
                 for (var x = 0; x < data.length; x++){
-                    console.log(data[0].status)
-                    console.log('status',data[x])
-                    var arrayBufferView = new Uint8Array(data[x].img.data.data);
+                   // console.log(data[0].status)
+                   // console.log('status',data[x])
+                    var arrayBufferView = new Uint8Array(data[x].status_img.data);
                     var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
                     var urlCreator = window.URL || window.webkitURL;
                     var imageUrl = urlCreator.createObjectURL( blob );
