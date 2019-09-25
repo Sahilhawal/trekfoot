@@ -51,29 +51,15 @@ app.use('/profile', profileRoutes);
 
 app.get('/', (req, res) => {
     status.find({},function(err,docs){
-        var statusarray = []         
-        var user_status = {}
         for (var x=0;x<docs.length;x++){
-/*            
-                    user_status.dp = User.findOne({_id: docs[x].id}).exec(function (error, user){
-                    console.log(user.thumbnail)
-                    user_status.dp = user.thumbnail; 
-                });
-                
-                    user_status.username = docs[x].user;
-                    user_status.status_img = docs[x].statusimg
-                    user_status.status =  docs[x].status                                   
-                    statusarray.push(user_status);    
-*/                             
 // promises 
-        
-        user_status.status_img = docs[x].img
-        user_status.status =  docs[x].status                    
+        var user_status = {}                
         var promise = new Promise(function(resolve, reject) {
+            user_status.status_img = docs[x].img
+            user_status.status =  docs[x].status
             User.findOne({_id: docs[x].id}).exec(function (error, user){
           
             if (user) {
-                //console.log(user)
                 user_status.username = user.username;
                 user_status.dp = user.thumbnail;                
                 resolve(user_status);
@@ -82,17 +68,9 @@ app.get('/', (req, res) => {
               reject(error("It broke"));
             }
           }); 
-        });  
-        promise.then(function(result) {                               
-            statusarray.push(user_status); 
-            io.emit('dashboard_status',statusarray );                
-            //console.log('result',statusarray); // "Stuff worked!"
-          }, function(err) {
-            console.log(err); // Error: "It broke"
-          });    
+        }); 
+        io.emit('dashboard_status',user_status);
         }     
-        console.log(statusarray)    
-        //io.emit('dashboard_status',docs );
     })
     res.render('home', { user: req.user });
 });
@@ -125,8 +103,10 @@ io.sockets.on('connection', function(socket) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
     });
 // for status and images    
-    socket.on('status_imgs', function() {            
-        status.find({},function(err,docs){
+    socket.on('status_imgs', function(id) {  
+        console.log('id',id)          
+        status.find({id:id},function(err,docs){
+            console.log('doc',docs)
             io.emit('status_imgs',docs );
         })
     });

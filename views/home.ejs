@@ -82,7 +82,7 @@
         </nav>
         <ul id="append"></ul>
         <div class="container" >
-          <div class="gallery">
+          <!---<div class="gallery">
             <a target="_blank" href="img_5terre.jpg">
               <img src="shikamaru.jpg" alt="Cinque Terre">
               <div class="bottom-left">Bottom Left</div>
@@ -105,24 +105,19 @@
             <a target="_blank" href="img_5terre.jpg">
               <img src="1077385-shikamaru-nara-wallpaper-1920x1200-for-4k.jpg" alt="Cinque Terre">
             </a>
-          </div>
+          </div>-->
         </div>
     </body>
 </html>
 <script>
   var socket = io.connect('http://localhost:3000');
   socket.on('dashboard_status', function(data) {    
-                console.log('data',data) 
                 var html=""
-                for (var x = 0; x < data.length; x++){
-                   // console.log(data[0].status)
-                   // console.log('status',data[x])
-                    var arrayBufferView = new Uint8Array(data[x].status_img.data);
+                    var arrayBufferView = new Uint8Array(data.status_img.data);
                     var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
                     var urlCreator = window.URL || window.webkitURL;
                     var imageUrl = urlCreator.createObjectURL( blob );
-                    html += "<div class='row final'><strong>"+data[x].name+"</strong></div><div class='row final'><p>"+data[x].status+"</p><img src='"+imageUrl+"'</div>"
-                    $("#append").html(html);                      
-                }                           
+                    html += "<div class='row final'><strong>"+data.name+"</strong></div><div class='row final'><p>"+data.status+"</p><img src='"+imageUrl+"'</div>"
+                    $("#append").append(html);                      
         });
 </script>
