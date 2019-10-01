@@ -9,6 +9,7 @@
             body{
                 font-family: arial;
                 margin: 0;
+                background: #333333;
             }
             .gallery{
                 background: rgba(39,62,84,0.82);
@@ -61,8 +62,12 @@
             left: 16px;
             }  
             #append img{
-                width: -webkit-fill-available;;                
-            }                  
+                padding-left: 100px; 
+                width: 80%;               
+            } 
+            strong{              
+                color: #08d405;
+            }                 
         </style>
     </head>
     <body>
@@ -111,13 +116,39 @@
 </html>
 <script>
   var socket = io.connect('http://localhost:3000');
-  socket.on('dashboard_status', function(data) {    
+  socket.on('dashboard_status', function(data) {  
+                console.log(data)
+                for (var x=0;x<data.length;x+= 4){
+                  //console.log(x)
+                  //console.log('data',data[x])
+                  var q = data[x]
+                  var details = {}
+                  details.username = q[0].username
+                  details.dp = q[0].dp
+                  details.status = data[x+1].status
+                  details.img = data[x+3].img.data.data
+                  var images = data[x+3].img
+                  console.log('img',images)
+                  
+                  var html=""
+                  
+                  var arrayBufferView = new Uint8Array(details.img);
+                  var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+                  var urlCreator = window.URL || window.webkitURL;
+                  var imageUrl = urlCreator.createObjectURL( blob );                  
+                  html += "<div class='row final'><strong>"+details.username+"</strong></div><div class='row final'><p>"+details.status+"</p><img src='"+imageUrl+"'></div>"
+                  $("#append").append(html);    
+                  //console.log(details)                  
+                }
+                /*
                 var html=""
                     var arrayBufferView = new Uint8Array(data.status_img.data);
                     var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
                     var urlCreator = window.URL || window.webkitURL;
                     var imageUrl = urlCreator.createObjectURL( blob );
-                    html += "<div class='row final'><strong>"+data.name+"</strong></div><div class='row final'><p>"+data.status+"</p><img src='"+imageUrl+"'</div>"
-                    $("#append").append(html);                      
+                    html += "<div class='row final'><strong>"+data.username+"</strong></div><div class='row final'><p>"+data.status+"</p><img src='"+imageUrl+"'</div>"
+                    $("#append").append(html);    
+                    */                    
         });
+        
 </script>

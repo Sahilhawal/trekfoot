@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth-routes');
 const profileRoutes = require('./routes/profile-routes');
 const passportSetup = require('./config/passport-setup');
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 const keys = require('./config/keys');
 //const http = require('http').Server(express);
 const app = express();
@@ -50,17 +51,40 @@ app.use('/profile', profileRoutes);
 // create home route
 
 app.get('/', (req, res) => {
-    status.find({},function(err,docs){
+    status.find({}).then(function(docs) {
+        var jobQueries = [];
+       docs.forEach(function(u) {
+          jobQueries.push(User.find({_id:u.id}));
+          jobQueries.push({status:u.status})
+          jobQueries.push({status:u.thumbnail})
+          console.log('u',u)
+          jobQueries.push(u)
+        });
+      
+        return Promise.all(jobQueries );
+      }).then(function(listOfJobs) {        
+        //console.log('listOfJobs',listOfJobs)
+        //console.log('status',listOfJobs[1].status)
+        //console.log('status2',listOfJobs[0])
+        var d = listOfJobs[0]
+        //console.log('status--',d[0].username)
+          //res.send(listOfJobs)         
+          io.emit('dashboard_status',listOfJobs);
+      }).catch(function(error) {
+          console.log(error)
+      });
+      res.render('home', { user: req.user });
+/*    status.find({},function(err,docs){
         for (var x=0;x<docs.length;x++){
 // promises 
-        var user_status = {}                
+        var user_status = {}  
+        user_status.status_img = docs[x].img;
+        user_status.status =  docs[x].status;                 
         var promise = new Promise(function(resolve, reject) {
-            user_status.status_img = docs[x].img
-            user_status.status =  docs[x].status
-            User.findOne({_id: docs[x].id}).exec(function (error, user){
-          
+        console.log('user_status111',user_status)                 
+            User.findOne({_id: docs[x].id}).exec(function (error, user){    
+            console.log('user_status',user_status)
             if (user) {
-                user_status.username = user.username;
                 user_status.dp = user.thumbnail;                
                 resolve(user_status);
             }
@@ -68,11 +92,19 @@ app.get('/', (req, res) => {
               reject(error("It broke"));
             }
           }); 
-        }); 
-        io.emit('dashboard_status',user_status);
+        });
+        promise.then(function(result) {
+            console.log('user_status---------',user_status) 
+            //console.log('result---------',result) 
+            //io.emit('dashboard_status',result);
+          }, function(err) {
+            console.log(err);
+          });
+        user_status = {}
         }     
     })
     res.render('home', { user: req.user });
+    */
 });
 
 // status
