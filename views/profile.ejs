@@ -26,7 +26,6 @@
                 margin: 0 10px 0 0;
             }
             nav a{
-                color: #fff;
                 font-size: 18px;
                 background: rgba(255,255,255,0.2);
                 text-decoration: none;
@@ -37,7 +36,6 @@
                 max-width: 100%;
                 margin: 30px ;
                 padding: 0 10px;
-                color: #333;
             }
             main img{
                 width: 40px;
@@ -81,14 +79,17 @@
                 width: 80%;
                 
             }
-            .final{
-                padding: 20px;
-            }
             .status_pics{
-                width: 25px !important;
+                width: 45px !important;                
             }
             .row final{
                 padding: 20px;  
+            }
+            strong{  
+                padding: 10px;             
+            }
+            .row p{
+                margin:10px;
             }
         </style>
     </head>
@@ -114,16 +115,6 @@
             <div  class="col-sm-8">
                     <h2 style="display:none;" id="uid"><%= user.id%></h2>
                     <h2 style="display:none;" id="displaypic"><%= user.thumbnail %></h2>
-                <div class='write_something'>
-                    <textarea name="status" id="status" cols="90" rows="2"></textarea>
-                </div>
-                <div>
-                    <input type="file" id="img">
-                </div>
-                <img class="photo">
-                <div>
-                    <button class="btn-primary" id='update'>Update</button>
-                </div>
                 <div class="status_list"> 
                     <h1>Status Updates</h1>                                     
                 </div>
@@ -167,17 +158,5 @@
         socket.on('update_status', function(status) {    
                 console.log($("#uid").html())            
                 $('#status_update').append($('<li>').html(status));
-        });
-/*        
-        socket.on('img_dp', function(imgs) {  
-            console.log(imgs)  
-            var arrayBufferView = new Uint8Array( imgs );
-        	var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-            var urlCreator = window.URL || window.webkitURL;
-            var imageUrl = urlCreator.createObjectURL( blob );
-            var img = document.createElement('img');
-            img.src = imageUrl;
-            document.body.appendChild(img);
-        }); 
-*/                               
+        });                            
 </script>

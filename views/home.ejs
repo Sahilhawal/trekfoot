@@ -2,14 +2,16 @@
 <html>
     <head>
         <script src=" http://localhost:3000/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <meta charset="utf-8">
         <title>New Project</title>
         <style>
             body{
                 font-family: arial;
                 margin: 0;
-                background: #333333;
+                background:whitesmoke;
             }
             .gallery{
                 background: rgba(39,62,84,0.82);
@@ -61,13 +63,40 @@
             bottom: 8px;
             left: 16px;
             }  
-            #append img{
-                padding-left: 100px; 
-                width: 80%;               
+            .status_pic{
+              padding-left: 100px; 
+              width: 1000px;               
             } 
             strong{              
                 color: #08d405;
-            }                 
+            }  
+            .status_box{
+              padding: 0px 0px 30px 200px;
+            }     
+            .img{
+              padding-top: 5px;
+              width: 400px;
+            }   
+            .form-control{
+              width: 80% !important;
+            }   
+            .image-upload > input
+            {
+                display: none;
+                
+            }
+            .image-upload img
+            {
+                width: 40px;
+                cursor: pointer;
+                padding-top: 5px;
+            }   
+            h1{
+              color: aliceblue;
+            }     
+            .display_pic{
+              width: 50px;
+            }        
         </style>
     </head>
     <body>
@@ -85,70 +114,65 @@
                 <% } %>
             </ul>
         </nav>
+        <% if (user) { %>
+        <h2 style="display:none;" id="uid"><%= user.id %></h2>
+        <h2 style="display:none;" id="username"><%= user.username %></h2>   
+        <% } %>     
+        <div class="status_box">
+          <h1>Express it!</h1>
+          <div class='write_something'>
+              <textarea name="status" id="status" cols="90" rows="2" class="form-control"></textarea>
+          </div>
+          <div class="image-upload">
+            <label for="file-input">
+                <img src="https://cdn0.iconfinder.com/data/icons/basic-outline/64/icon-basic-set_12-camera-512.png"/>
+            </label>        
+            <input id="file-input" class="img" type="file"/>
+            <button class="btn btn-primary" id='update'>Update</button>
+        </div>
+          <img class="photo">     
+        </div>
         <ul id="append"></ul>
         <div class="container" >
-          <!---<div class="gallery">
-            <a target="_blank" href="img_5terre.jpg">
-              <img src="shikamaru.jpg" alt="Cinque Terre">
-              <div class="bottom-left">Bottom Left</div>
-            </a>
-          </div>
-          
-          <div class="gallery">
-            <a target="_blank" href="img_5terre.jpg">
-              <img src="`shikamaru.jpg" alt="Cinque Terre">
-            </a>
-          </div>
-          
-          <div class="gallery">
-            <a target="_blank" href="img_5terre.jpg">
-              <img src="715451.png" alt="Cinque Terre">
-            </a>
-          </div>
-          
-          <div class="gallery">
-            <a target="_blank" href="img_5terre.jpg">
-              <img src="1077385-shikamaru-nara-wallpaper-1920x1200-for-4k.jpg" alt="Cinque Terre">
-            </a>
-          </div>-->
         </div>
     </body>
 </html>
 <script>
   var socket = io.connect('http://localhost:3000');
   socket.on('dashboard_status', function(data) {  
-                console.log(data)
-                for (var x=0;x<data.length;x+= 4){
+                //console.log(data)
+                console.log('details',data)    
+                for (var x=0;x<data.length;x+= 2){
                   //console.log(x)
                   //console.log('data',data[x])
                   var q = data[x]
                   var details = {}
-                  details.username = q[0].username
-                  details.dp = q[0].dp
+                  details.username = data[x].username
+                  details.dp = q[0].thumbnail
                   details.status = data[x+1].status
-                  details.img = data[x+3].img.data.data
-                  var images = data[x+3].img
-                  console.log('img',images)
-                  
-                  var html=""
-                  
+                  console.log('details',data[x+1].img.data.data) 
+                  details.img = data[x+1].img.data.data
+                  //var images = data[x+3].img                                
+                  var html=""                  
                   var arrayBufferView = new Uint8Array(details.img);
                   var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
                   var urlCreator = window.URL || window.webkitURL;
                   var imageUrl = urlCreator.createObjectURL( blob );                  
-                  html += "<div class='row final'><strong>"+details.username+"</strong></div><div class='row final'><p>"+details.status+"</p><img src='"+imageUrl+"'></div>"
+                  html += "<div class='container'><div class='row'><div class='col-md-4'><h2><img src='"+details.dp+"' class='display_pic'>"+details.username+"</h2><p>"+details.status+"</p><img class='status_pic' src='"+imageUrl+"'></div></div></div>"
                   $("#append").append(html);    
-                  //console.log(details)                  
                 }
-                /*
-                var html=""
-                    var arrayBufferView = new Uint8Array(data.status_img.data);
-                    var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-                    var urlCreator = window.URL || window.webkitURL;
-                    var imageUrl = urlCreator.createObjectURL( blob );
-                    html += "<div class='row final'><strong>"+data.username+"</strong></div><div class='row final'><p>"+data.status+"</p><img src='"+imageUrl+"'</div>"
-                    $("#append").append(html);    
-                    */                    
-        });
+              });
+              $(document.body).on('click',"#update",function(){
+                
+                  var blobFile = $('.img').get(0).files[0]
+                  var data={}
+                  data.id = $("#uid").html(); 
+                  data.name = $("#username").html();
+                  data.status = $('#status').val(); 
+                  data.file = blobFile;
+                  socket.emit('status_update',data);   
+                  console.log('button clicked!',data)       
+              })                            
+       
         
 </script>

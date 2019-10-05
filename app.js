@@ -55,21 +55,22 @@ app.get('/', (req, res) => {
         var jobQueries = [];
        docs.forEach(function(u) {
           jobQueries.push(User.find({_id:u.id}));
-          jobQueries.push({status:u.status})
-          jobQueries.push({status:u.thumbnail})
-          console.log('u',u)
+          //jobQueries.push({status:u.status})
+          //jobQueries.push({status:u.thumbnail})
           jobQueries.push(u)
         });
       
         return Promise.all(jobQueries );
-      }).then(function(listOfJobs) {        
+      }).then(function(listOfJobs) {    
+        io.emit('dashboard_status',listOfJobs);    
         //console.log('listOfJobs',listOfJobs)
         //console.log('status',listOfJobs[1].status)
         //console.log('status2',listOfJobs[0])
-        var d = listOfJobs[0]
         //console.log('status--',d[0].username)
           //res.send(listOfJobs)         
-          io.emit('dashboard_status',listOfJobs);
+          //io.emit('dashboard_status',listOfJobs);
+          console.log('listOfJobs',listOfJobs)
+          //io.emit('dashboard_status',listOfJobs);
       }).catch(function(error) {
           console.log(error)
       });
@@ -168,7 +169,7 @@ io.sockets.on('connection', function(socket) {
         console.log("status",data.status)
         imgs.save()     
         io.emit('update_status', '<p>' + data.status + '</p>');
-        io.emit('img_dp',imgs.img.data.buffer );
+        //io.emit('img_dp',imgs.img.data.buffer );
         //console.log(imgs)
         //console.log('img',imgs.img.data.buffer)
     });
