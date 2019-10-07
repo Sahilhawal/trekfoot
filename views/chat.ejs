@@ -95,7 +95,8 @@
                 height: 30px;
             }
 </style>
-    <script src=" http://localhost:3000/socket.io/socket.io.js"></script>
+    
+    <script src=" http://localhost:8080/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
@@ -118,15 +119,7 @@
       <label><strong>Username:</strong></label>
     </div>
     <div class="form-group mx-sm-3 mb-2">
-      <input class="form-control" id="user" placeholder="username">
-      <div id="avatars">
-        <a href="#">
-            <img src="/avatar.png" alt="avatar" class="avatar" value="avatar.png">
-        </a>
-        <a href="#">
-            <img src="/male_avatar.png" alt="male_avatar" class="avatar" value="male_avatar.png">
-        </a>
-      </div>    
+      <input class="form-control" id="user" placeholder="username"> 
     </div>
       <button type="submit" id="submit" class="btn btn-primary mx-sm-3 mb-2">Join!</button>
    </div>
@@ -139,8 +132,8 @@
     </form>
   </div>
     <script>   
-           
-            var socket = io.connect('http://localhost:3000');
+           console.log($("#uid").html())
+            var socket = io.connect('http://localhost:8080');
 
             $(document.body).on('click',".avatar",function(){
               $(".avatar").removeClass("selected");
@@ -163,16 +156,6 @@
                 
                 $('#messages').append($('<li>').html(username));
             });
-/*           
-            $(document.body).on('click','#submit',function(){
-              $("#new_user").hide();
-              $("#msg").show()
-              var data={}
-              data.username = $('#user').val(),
-              data.avatar = $('.selected').attr('alt')
-              socket.emit('username', data);
-            })
-*/
             $( document ).ready(function() {
                 console.log( "ready!" );
                 var data={}
