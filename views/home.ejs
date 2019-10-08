@@ -100,6 +100,11 @@
             .user_thumbnail{
                 border-radius: 50%;
             }
+            nav li img{
+                float: right;
+                width: 30px;
+                height: 30px;
+            }
         </style>
     </head>
     <body>
@@ -109,8 +114,9 @@
                   <li><a href="/homepage">Home</a></li>
                   <li><a href="/profile">Profile</a></li>
                   <li><a href="/chat">Chat</a></li>
-                  <li style="float: right"><img class='user_thumbnail' src="<%= user.thumbnail %>" /></li>
                   <li style="float:right"><a href="/auth/logout">Log out</a></li>
+                  <li style="float: right"><img class='user_thumbnail' src="<%= user.thumbnail %>" /></li>
+                  
                 <% } else { %>
                   <li><a href="/auth/login">Login</a></li>
                 <% } %>
