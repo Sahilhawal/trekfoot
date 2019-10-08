@@ -11,6 +11,7 @@
                 font-family: arial;
                 margin: 0;
             }
+            /*
             nav{
                 background:black;
                 padding: 20px 10px;
@@ -32,6 +33,7 @@
                 padding: 10px;
                 display: block;
             }
+            */
             main, header{
                 max-width: 100%;
                 margin: 30px ;
@@ -92,9 +94,39 @@
                 margin:10px;
             }
         </style>
+        <link href="css/grayscale.min.css" rel="stylesheet">
     </head>
     <body>
-        <nav>
+            <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+                <div class="container">
+                    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarResponsive">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/homepage">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/profile">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/chat">Chat</a>
+                            </li>
+                            <li class="nav-item">
+                            <% if (user) { %>
+                            <a class="nav-link js-scroll-trigger" href="/auth/logout">Logout</a>
+                            <% } else { %>
+                            <a class="nav-link js-scroll-trigger" href="/auth/login">Log In</a>
+                            <% } %>
+                            </li>
+                            <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        <!---<nav>
             <ul>
                 <% if (user) { %>
                 <li style='float:right'><a href="/auth/logout">Log out</a></li>
@@ -106,7 +138,7 @@
                 <li><a href="/chat">Chat</a></li>
                 <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
             </ul>
-        </nav>
+        </nav>--->
         <div class="row">
             <div  class="col-sm-3">
                 <img src="<%= user.thumbnail %>" alt="avatar" class="dp">
@@ -128,6 +160,7 @@
         var id = $('#uid').html()   
         var socket = io.connect(window.location.hostname);
         $(document).ready(function() {
+            console.log('requesting data')
             socket.emit('status_imgs',id)
         })
 
