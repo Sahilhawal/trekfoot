@@ -54,7 +54,7 @@ app.get('/homepage', (req, res) => {
       
         return Promise.all(jobQueries );
       }).then(function(listOfJobs) {    
-        socket.emit('dashboard_status',listOfJobs);
+        io.socket.emit('dashboard_status',listOfJobs);
         console.log('all status sent to client side(homepage)',listOfJobs)    
       }).catch(function(error) {
           console.log(error)
