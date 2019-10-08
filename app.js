@@ -43,7 +43,10 @@ app.get('/', (req, res) => {
 })
 
 // create home route
-
+ app.get('/homepage', (req, res) => {
+          res.render('home', { user: req.user });
+    });
+    
 
 // for chatting
 app.get('/chat', (req, res) => {
@@ -52,7 +55,22 @@ app.get('/chat', (req, res) => {
 
 // sockets
 io.sockets.on('connection', function(socket) {
-    app.get('/homepage', (req, res) => {
+   
+    socket.on('username', function(data) {
+        socket.username = data.username;
+        socket.avatar = data.avatar;
+        io.emit('is_online', '<img src="'+socket.avatar+'" /><i>' + socket.username + ' join the chat..</i>');
+    });
+
+    socket.on('disconnect', function(username) {
+        io.emit('is_offline', '<i>' + socket.username + ' left the chat..</i>');
+    })
+
+    socket.on('chat_message', function(message) {
+        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+    });
+
+    socket.on('please_aaja', function(username) {
         console.log('On homepage finding status')
         status.find({}).then(function(docs) {
             var jobQueries = [];
@@ -68,22 +86,7 @@ io.sockets.on('connection', function(socket) {
           }).catch(function(error) {
               console.log(error)
           });
-          res.render('home', { user: req.user });
-    });
-    
-    socket.on('username', function(data) {
-        socket.username = data.username;
-        socket.avatar = data.avatar;
-        io.emit('is_online', '<img src="'+socket.avatar+'" /><i>' + socket.username + ' join the chat..</i>');
-    });
-
-    socket.on('disconnect', function(username) {
-        io.emit('is_offline', '<i>' + socket.username + ' left the chat..</i>');
     })
-
-    socket.on('chat_message', function(message) {
-        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
-    });
 // for status and images    
     socket.on('status_imgs', function(id) { 
         console.log('finding data only for the user') 

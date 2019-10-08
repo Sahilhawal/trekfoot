@@ -116,7 +116,6 @@
                   <li><a href="/chat">Chat</a></li>
                   <li style="float:right"><a href="/auth/logout">Log out</a></li>
                   <li style="float: right"><img class='user_thumbnail' src="<%= user.thumbnail %>" /></li>
-                  
                 <% } else { %>
                   <li><a href="/auth/login">Login</a></li>
                 <% } %>
@@ -146,7 +145,12 @@
     </body>
 </html>
 <script>
-  var socket = io.connect(window.location.hostname);
+  var socket = io.connect('http://localhost:8080' || window.location.hostname);
+
+  $(document).ready(function() {
+            console.log('requesting data')
+            socket.emit('please_aaja')
+        })
   socket.on('dashboard_status', function(data) {  
                 //console.log(data)
                 console.log('details',data)    
