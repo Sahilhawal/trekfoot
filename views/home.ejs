@@ -151,7 +151,7 @@
                   details.dp = q[0].thumbnail
                   details.status = data[x+1].status
                   var hideornot = ""
-                  if (data[x+1].img.data.data){
+                  if (data[x+1].img.data){
                     details.img = data[x+1].img.data.data
                     var arrayBufferView = new Uint8Array(details.img);
                     var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
