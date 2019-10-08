@@ -97,17 +97,19 @@
             .display_pic{
               width: 50px;
             }        
+            .user_thumbnail{
+                border-radius: 50%;
+            }
         </style>
     </head>
     <body>
         <nav>
             <ul>
                 <% if (user) { %>
+                  <li><a href="/homepage">Home</a></li>
                   <li><a href="/profile">Profile</a></li>
                   <li><a href="/chat">Chat</a></li>
-                <% } %>
-                <% if (user) { %>
-                  <li><a href="/homepage">Homepage</a></li>
+                  <li style="float: right"><img class='user_thumbnail' src="<%= user.thumbnail %>" /></li>
                   <li style="float:right"><a href="/auth/logout">Log out</a></li>
                 <% } else { %>
                   <li><a href="/auth/login">Login</a></li>
@@ -178,6 +180,4 @@
                   $('#input_file').val('').clone(true)  
                   console.log('button clicked!',data)       
               })                            
-       
-        
 </script>

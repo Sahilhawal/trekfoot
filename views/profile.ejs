@@ -54,6 +54,7 @@
             .dp{
                 width: 200px;
                 padding: 15px
+                border-radius: 50%;
             }
             #status_update{
                 padding: 10px;
@@ -91,20 +92,26 @@
             .row p{
                 margin:10px;
             }
+            a{
+                color:white
+            }
+            #user_thumbnail{
+                border-radius: 50%;
+            }
         </style>
     </head>
     <body>
         <nav>
             <ul>
                 <% if (user) { %>
+                <li style="float: right"><img id='user_thumbnail' src="<%= user.thumbnail %>" /></li>
                 <li style='float:right'><a href="/auth/logout">Log out</a></li>
                 <% } else { %>
                 <li style='float:right'><a href="/auth/login">Login</a></li>
                 <% } %>
-                <li><a href="/homepage">Homepage</a></li>
+                <li><a href="/homepage">Home</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/chat">Chat</a></li>
-                <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
             </ul>
         </nav>
         <div class="row">

@@ -94,6 +94,9 @@
                 width: 30px;
                 height: 30px;
             }
+            .user_thumbnail{
+              border-radius: 50%;
+            }
 </style>
     
     <script src="/socket.io/socket.io.js"></script>
@@ -108,10 +111,10 @@
             <% } else { %>
             <li style='float:right'><a href="/auth/login">Login</a></li>
             <% } %>
-            <li><a href="/homepage">Homepage</a></li>
+            <li><a href="/homepage">Home</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/chat">Chat</a></li>
-            <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
+            <li style="float: right"><img class='user_thumbnail' src="<%= user.thumbnail %>" /></li>
         </ul>
     </nav>
   <div id="new_user">
@@ -132,7 +135,6 @@
     </form>
   </div>
     <script>   
-           console.log($("#uid").html())
             var socket = io.connect(window.location.hostname);
 
             $(document.body).on('click',".avatar",function(){
@@ -153,7 +155,6 @@
             });
             
             socket.on('is_online', function(username) {
-                
                 $('#messages').append($('<li>').html(username));
             });
             $( document ).ready(function() {
