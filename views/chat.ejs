@@ -96,7 +96,7 @@
             }
 </style>
     
-    <script src=" http://localhost:8080/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
@@ -104,11 +104,11 @@
     <nav>
         <ul>
             <% if (user) { %>
-            <li><a href="/auth/logout">Log out</a></li>
+            <li style='float:right'><a href="/auth/logout">Log out</a></li>
             <% } else { %>
-            <li><a href="/auth/login">Login</a></li>
+            <li style='float:right'><a href="/auth/login">Login</a></li>
             <% } %>
-            <li><a href="/">Homepage</a></li>
+            <li><a href="/homepage">Homepage</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/chat">Chat</a></li>
             <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
@@ -133,7 +133,7 @@
   </div>
     <script>   
            console.log($("#uid").html())
-            var socket = io.connect('http://localhost:8080');
+            var socket = io.connect(window.location.hostname);
 
             $(document.body).on('click',".avatar",function(){
               $(".avatar").removeClass("selected");

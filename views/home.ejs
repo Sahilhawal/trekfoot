@@ -92,7 +92,7 @@
                 padding-top: 5px;
             }   
             h1{
-              color: aliceblue;
+              color: black;
             }     
             .display_pic{
               width: 50px;
@@ -103,14 +103,14 @@
         <nav>
             <ul>
                 <% if (user) { %>
-                <li><a href="/auth/logout">Log out</a></li>
-                <% } else { %>
-                <li><a href="/auth/login">Login</a></li>
-                <li><a href="/homepage">Homepage</a></li>
+                  <li><a href="/profile">Profile</a></li>
+                  <li><a href="/chat">Chat</a></li>
                 <% } %>
                 <% if (user) { %>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/chat">Chat</a></li>
+                  <li><a href="/homepage">Homepage</a></li>
+                  <li style="float:right"><a href="/auth/logout">Log out</a></li>
+                <% } else { %>
+                  <li><a href="/auth/login">Login</a></li>
                 <% } %>
             </ul>
         </nav>
@@ -125,7 +125,7 @@
           </div>
           <div class="image-upload">
             <label for="file-input">
-                <img src="https://cdn0.iconfinder.com/data/icons/basic-outline/64/icon-basic-set_12-camera-512.png"/>
+                <img id='input_file' src="https://cdn0.iconfinder.com/data/icons/basic-outline/64/icon-basic-set_12-camera-512.png"/>
             </label>        
             <input id="file-input" class="img" type="file"/>
             <button class="btn btn-primary" id='update'>Update</button>
@@ -147,30 +147,35 @@
                   //console.log('data',data[x])
                   var q = data[x]
                   var details = {}
-                  details.username = data[x].username
+                  details.username = q[0].username
                   details.dp = q[0].thumbnail
                   details.status = data[x+1].status
-                  console.log('details',data[x+1].img.data.data) 
-                  details.img = data[x+1].img.data.data
-                  //var images = data[x+3].img                                
-                  var html=""                  
-                  var arrayBufferView = new Uint8Array(details.img);
-                  var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-                  var urlCreator = window.URL || window.webkitURL;
-                  var imageUrl = urlCreator.createObjectURL( blob );                  
-                  html += "<div class='container'><div class='row'><div class='col-md-4'><h2><img src='"+details.dp+"' class='display_pic'>"+details.username+"</h2><p>"+details.status+"</p><img class='status_pic' src='"+imageUrl+"'></div></div></div>"
+                  var hideornot = ""
+                  if (data[x+1].img.data.data){
+                    details.img = data[x+1].img.data.data
+                    var arrayBufferView = new Uint8Array(details.img);
+                    var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+                    var urlCreator = window.URL || window.webkitURL;
+                    var imageUrl = urlCreator.createObjectURL( blob );       
+                  }
+                  else{
+                    hideornot = 'hidden'
+                  }                         
+                  var html=""                             
+                  html += "<div class='container'><div class='row'><div class='col-md-4'><h2><img src='"+details.dp+"' class='display_pic'>"+details.username+"</h2><p>"+details.status+"</p><img class='status_pic' src='"+imageUrl+"' "+hideornot+"></div></div></div>"
                   $("#append").append(html);    
                 }
               });
               $(document.body).on('click',"#update",function(){
-                
                   var blobFile = $('.img').get(0).files[0]
                   var data={}
                   data.id = $("#uid").html(); 
                   data.name = $("#username").html();
                   data.status = $('#status').val(); 
                   data.file = blobFile;
-                  socket.emit('status_update',data);   
+                  socket.emit('status_update',data);
+                  $('#update').val('') 
+                  $('#input_file').val('').clone(true)  
                   console.log('button clicked!',data)       
               })                            
        

@@ -97,11 +97,11 @@
         <nav>
             <ul>
                 <% if (user) { %>
-                <li><a href="/auth/logout">Log out</a></li>
+                <li style='float:right'><a href="/auth/logout">Log out</a></li>
                 <% } else { %>
-                <li><a href="/auth/login">Login</a></li>
+                <li style='float:right'><a href="/auth/login">Login</a></li>
                 <% } %>
-                <li><a href="/">Homepage</a></li>
+                <li><a href="/homepage">Homepage</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/chat">Chat</a></li>
                 <li style="float: right"><img src="<%= user.thumbnail %>" /></li>
@@ -126,7 +126,7 @@
 <script>  
         var displaypic=$("#displaypic").html()
         var id = $('#uid').html()   
-        var socket = io.connect('http://localhost:8080');
+        var socket = io.connect(window.location.hostname);
         $(document).ready(function() {
             socket.emit('status_imgs',id)
         })
