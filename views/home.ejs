@@ -174,7 +174,7 @@
                   data.status = $('#status').val(); 
                   data.file = blobFile;
                   socket.emit('status_update',data);
-                  $('#update').val('') 
+                  $('#status').val('') 
                   $('#input_file').val('').clone(true)  
                   console.log('button clicked!',data)       
               })                            

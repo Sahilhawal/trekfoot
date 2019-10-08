@@ -39,11 +39,12 @@ app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
 
 app.get('/', (req, res) => {
-    res.render('mainpage', { user: req.user })
+    res.render('login', { user: req.user })
 })
 
 // create home route
 app.get('/homepage', (req, res) => {
+    console.log('On homepage finding status')
     status.find({}).then(function(docs) {
         var jobQueries = [];
        docs.forEach(function(u) {
@@ -53,7 +54,8 @@ app.get('/homepage', (req, res) => {
       
         return Promise.all(jobQueries );
       }).then(function(listOfJobs) {    
-        io.emit('dashboard_status',listOfJobs);    
+        io.emit('dashboard_status',listOfJobs);
+        console.log('all status sent to client side(homepage)',listOfJobs)    
       }).catch(function(error) {
           console.log(error)
       });
@@ -74,21 +76,22 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function(username) {
-        io.emit('is_online', '<i>' + socket.username + ' left the chat..</i>');
+        io.emit('is_offline', '<i>' + socket.username + ' left the chat..</i>');
     })
 
     socket.on('chat_message', function(message) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
     });
 // for status and images    
-    socket.on('status_imgs', function(id) {  
+    socket.on('status_imgs', function(id) { 
+        console.log('finding data only for the user') 
         status.find({id:id},function(err,docs){
             io.emit('status_imgs',docs );
+            console.log('user data sent to profile')
         })
     });
 // status
     socket.on('status_update', function(data) {
-        console.log("statusssssssss",data)
         var imgs = new status
         imgs.id = data.id;  
         imgs.img.data = data.file;
@@ -96,6 +99,7 @@ io.sockets.on('connection', function(socket) {
         imgs.status = data.status;
         imgs.name = data.name; 
         imgs.save()     
+        console.log('Status saved')
         io.emit('update_status', '<p>' + data.status + '</p>');
     });
 
