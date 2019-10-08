@@ -43,24 +43,7 @@ app.get('/', (req, res) => {
 })
 
 // create home route
-app.get('/homepage', (req, res) => {
-    console.log('On homepage finding status')
-    status.find({}).then(function(docs) {
-        var jobQueries = [];
-       docs.forEach(function(u) {
-          jobQueries.push(User.find({_id:u.id}));
-          jobQueries.push(u)
-        });
-      
-        return Promise.all(jobQueries );
-      }).then(function(listOfJobs) {    
-        io.socket.emit('dashboard_status',listOfJobs);
-        console.log('all status sent to client side(homepage)',listOfJobs)    
-      }).catch(function(error) {
-          console.log(error)
-      });
-      res.render('home', { user: req.user });
-});
+
 
 // for chatting
 app.get('/chat', (req, res) => {
@@ -69,6 +52,25 @@ app.get('/chat', (req, res) => {
 
 // sockets
 io.sockets.on('connection', function(socket) {
+    app.get('/homepage', (req, res) => {
+        console.log('On homepage finding status')
+        status.find({}).then(function(docs) {
+            var jobQueries = [];
+           docs.forEach(function(u) {
+              jobQueries.push(User.find({_id:u.id}));
+              jobQueries.push(u)
+            });
+          
+            return Promise.all(jobQueries );
+          }).then(function(listOfJobs) {    
+            socket.emit('dashboard_status',listOfJobs);
+            console.log('all status sent to client side(homepage)',listOfJobs)    
+          }).catch(function(error) {
+              console.log(error)
+          });
+          res.render('home', { user: req.user });
+    });
+    
     socket.on('username', function(data) {
         socket.username = data.username;
         socket.avatar = data.avatar;
