@@ -38,8 +38,12 @@ mongoose.connect(keys.mongodb.dbURI, () => {
 app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
 
-// create home route
 app.get('/', (req, res) => {
+    res.render('mainpage', { user: req.user })
+})
+
+// create home route
+app.get('/homepage', (req, res) => {
     status.find({}).then(function(docs) {
         var jobQueries = [];
        docs.forEach(function(u) {
